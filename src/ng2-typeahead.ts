@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, OnInit, forwardRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, OnInit, forwardRef, TemplateRef } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 
 const noop = () => {
@@ -12,7 +12,7 @@ export const TYPEAHEAD_CONTROL_VALUE_ACCESSOR:any = {
 
 
 @Component({
-  selector: 'typeahead',
+  selector: 'jrl-typeahead',
   template: `
     <div class="typeahead">
 
@@ -42,10 +42,18 @@ export const TYPEAHEAD_CONTROL_VALUE_ACCESSOR:any = {
 
         <ul (mouseout)="suggestionsMouseOut($event)">
 
-          <li *ngFor="let suggestion of suggestions"
+          <li *ngFor="let suggestion of suggestions; let index = index;"
             (mouseover)="suggestionMouseOver(suggestion)"
             (mousedown)="suggestionMouseDown(suggestion)"
-            [ngClass]="{'typeahead-suggestion-active': activeSuggestion===suggestion}">{{ suggestion[displayProperty] }}</li>
+            [ngClass]="{'typeahead-suggestion-active': activeSuggestion===suggestion}">
+              <!-- {{ suggestion[displayProperty] }} -->
+              <template [ngTemplateOutlet]="template"
+                        [ngOutletContext]="{
+                          suggestion: suggestion,
+                          index: index
+                        }">
+              </template>
+          </li>
 
         </ul>
 
@@ -120,7 +128,11 @@ export const TYPEAHEAD_CONTROL_VALUE_ACCESSOR:any = {
   providers: [TYPEAHEAD_CONTROL_VALUE_ACCESSOR]
 })
 export class Typeahead implements OnInit, ControlValueAccessor {
-  abstract;
+
+  /**
+   * The Template to show in the TypeAhead Result
+   */
+  @Input() template: TemplateRef<any>;
 
   /**
    * The complete list of items.
