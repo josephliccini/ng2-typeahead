@@ -11,8 +11,8 @@
       "noImplicitAny": false,
       "outDir": "lib"
    },
-   "files": [
-      "src/ng2-typeahead.ts"
+   "include": [
+      "src/**/*.ts"
    ],
    "exclude": [
       "node_modules"
